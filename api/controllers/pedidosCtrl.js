@@ -89,8 +89,6 @@ exports.agreggation = function(req, res) {
 
 	var query = agg.query(req.query);
 
-	console.log(query);
-
 	Pedidos.aggregate(query, function(err, result) {
 		if (err) {
 			res.status(500).send(err);
