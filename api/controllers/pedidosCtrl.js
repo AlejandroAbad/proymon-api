@@ -20,11 +20,7 @@ exports.getByCRC = function(req, res) {
 };
 
 exports.getLast = function(req, res) {
-	Pedidos.find( {ok: true, fecha: 20180903}, [], {
-	    limit: 1, 
-	    sort:{ timestamp: -1 }
-	
-	}, function(err, pedido) {
+	Pedidos.findOne( {ok: true, fecha: 20180903}, [], {sort: { timestamp: -1 }}, function(err, pedido) {
 
 		if (err) {
 			res.send(err);
