@@ -22,7 +22,6 @@ exports.getLast = function(req, res) {
 	var now = ProymanUtil.dateToProyman();
 	
 	Pedidos.findOne( {ok: true, fecha: now}, [], {sort: { timestamp: -1 }}, function(err, pedido) {
-
 		if (err) {
 			res.send(err);
 			return;
