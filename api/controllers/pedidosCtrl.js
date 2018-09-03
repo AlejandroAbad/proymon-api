@@ -2,9 +2,8 @@
 
 'use strict';
 var mongoose = require('mongoose');
-var ObjectId = mongoose.Types.ObjectId;
-
 var Pedidos = mongoose.model('pedido');
+const ProymanUtil = require('../../util/proyman.js');
 
 exports.getByCRC = function(req, res) {
 	Pedidos.findById(req.params.crc, function(err, pedido) {
@@ -20,7 +19,9 @@ exports.getByCRC = function(req, res) {
 };
 
 exports.getLast = function(req, res) {
-	Pedidos.findOne( {ok: true, fecha: 20180903}, [], {sort: { timestamp: -1 }}, function(err, pedido) {
+	var now = ProymanUtil.dateToProyman();
+	
+	Pedidos.findOne( {ok: true, fecha: now}, [], {sort: { timestamp: -1 }}, function(err, pedido) {
 
 		if (err) {
 			res.send(err);
@@ -31,6 +32,7 @@ exports.getLast = function(req, res) {
 
 	});
 };
+
 
 exports.filter = function(req, res) {
 

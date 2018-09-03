@@ -1,9 +1,10 @@
 'use strict';
 
+const ProymanUtil = require('../../util/proyman.js');
 exports.query = function(params) {
 
 	if (!params.fecha) {
-		params.fecha = require('../../util/proyman.js').dateToProyman();
+		params.fecha = ProymanUtil.dateToProyman();
 	}
 
 	return [ {

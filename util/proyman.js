@@ -11,5 +11,5 @@ exports.dateToProyman = function ( date ) {
 		return s;
 	}
 	
-	return zeroPad(date.getFullYear(), 4) + zeroPad(date.getMonth() + 1, 2) +  zeroPad(date.getDate(), 2);
+	return parseInt(zeroPad(date.getFullYear(), 4) + zeroPad(date.getMonth() + 1, 2) +  zeroPad(date.getDate(), 2));
 }
