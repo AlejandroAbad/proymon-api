@@ -23,6 +23,7 @@ exports.getLast = function(req, res) {
 	Pedidos.find( {ok: true, fecha: 20180903}, [], {
 	    limit: 1, 
 	    sort:{ timestamp: -1 }
+	
 	}, function(err, pedido) {
 
 		if (err) {
