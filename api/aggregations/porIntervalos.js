@@ -25,7 +25,19 @@ exports.query = function(params) {
 		$addFields : {
 			_rango : {
 				$floor : {
-					$divide : [ "$lineas", params.intervalo ]
+					$divide : [ {
+						$add : [ {
+							$multiply : [ {
+								$floor : {
+									$divide : [ "$hora", 10000 ]
+								}
+							}, 60 ]
+						}, {
+							$divide : [ {
+								$mod : [ "$hora", 10000 ]
+							}, 100 ]
+						} ]
+					}, params.intervalo /* <- ESTE ES EL INTERVALO EN MINUTOS */]
 				}
 			}
 		}
