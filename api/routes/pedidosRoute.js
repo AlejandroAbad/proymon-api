@@ -19,5 +19,8 @@ module.exports = function(app) {
   app.route('/pedido/:crc')
   	.get(pedidosCtrl.getByCRC);
   
+  app.route('/descartar/:crc')
+	.get(pedidosCtrl.discard);
+  
 };
 

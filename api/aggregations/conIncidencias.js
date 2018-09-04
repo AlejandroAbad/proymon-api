@@ -7,21 +7,17 @@ exports.query = function(params) {
 		params.fecha = ProymanUtil.dateToProyman();
 	}
 
-	return [
-		  {
-			    $match: {
-			      fecha: parseInt(params.fecha), 
-			      $or: [
-			        {
-			          ok: false
-			        }, {
-			          incidencia: true
-			        }, {
-			          descartado: true
-			        }
-			      ]
-			    }
-			  }
-			];
+	return [ {
+		$match : {
+			fecha : parseInt(params.fecha),
+			$or : [ {
+				ok : false
+			}, {
+				incidencia : true
+			}, {
+				descartado : true
+			} ]
+		}
+	} ];
 
 }

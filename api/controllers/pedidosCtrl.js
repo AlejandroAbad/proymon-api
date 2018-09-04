@@ -1,8 +1,8 @@
 // CONTROLLER
 
 'use strict';
-var mongoose = require('mongoose');
-var Pedidos = mongoose.model('pedido');
+const mongoose = require('mongoose');
+const Pedidos = mongoose.model('pedido');
 const ProymanUtil = require('../../util/proyman.js');
 
 exports.getByCRC = function(req, res) {
@@ -17,6 +17,7 @@ exports.getByCRC = function(req, res) {
 
 	});
 };
+
 
 exports.getLast = function(req, res) {
 	var now = ProymanUtil.dateToProyman();
@@ -101,6 +102,42 @@ exports.agreggation = function(req, res) {
 
 }
 
+
+
 exports.help = function(req, res) {
 	res.json({});
 };
+
+
+
+exports.discard = function(req, res) {
+	
+	var crc = req.params.crc;
+	var ip = (req.headers['x-forwarded-for'] || req.connection.remoteAddress);
+	var cambios = {
+		$set: {descartado: true},
+		$push: {
+			eventos: {
+				fecha: ProymanUtil.dateToProyman(),
+				hora: ProymanUtil.hourToProyman(),
+				descripcion: "Pedido descartado manualmente",
+				tipo: "INCIDENCIA",
+				original: "Pedido descartado manualmente desde [" + ip + "]",
+				timestamp: ProymanUtil.timestamp()
+			}
+		}
+	};
+	
+	
+	Pedidos.findOneAndUpdate({_id: crc}, cambios, {new: true}, function (err, pedido) {
+		if (err) {
+			res.status(500).send(err);
+			return;
+		}
+		
+		res.json(pedido);
+
+	});
+	
+	
+}
