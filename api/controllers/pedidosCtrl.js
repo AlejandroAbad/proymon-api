@@ -104,8 +104,15 @@ exports.agreggation = function(req, res) {
 
 
 
-exports.help = function(req, res) {
+exports.test = function(req, res) {
+	
+	console.log(req.query);
+	console.log(req.params);
+	console.log(req.body);
+	
 	res.json({});
+	
+	
 };
 
 
