@@ -34,48 +34,6 @@ exports.getLast = function(req, res) {
 };
 
 
-exports.filter = function(req, res) {
-
-	var filter = {};
-
-	if (req.query.ok)
-		filter.ok = (req.query.ok === 'true');
-	if (req.query.incidencia)
-		filter.incidencia = (req.query.incidencia === 'true');
-	if (req.query.descartado)
-		filter.descartado = (req.query.descartado === 'true');
-	if (req.query.fecha)
-		filter.fecha = parseInt(req.query.fecha);
-	if (req.query.hora)
-		filter.hora = parseInt(req.query.hora);
-	if (req.query.clisap)
-		filter.clisap = req.query.clisap;
-	if (req.query.almacen)
-		filter.almacen = req.query.almacen;
-	if (req.query.tipoped)
-		filter.tipoped = req.query.tipoped;
-	if (req.query.numped)
-		filter['pedido.pedido'] = req.query.numped;
-
-	if (filter === {}) {
-		res.status(400).json({
-			error : 18083013151,
-			mensaje : 'Debes especificar al menos un filtro'
-		});
-		return;
-	}
-
-	console.log(filter);
-
-	Pedidos.find(filter, function(err, pedido) {
-		if (err) {
-			res.status(500).json(err);
-			return;
-		}
-		res.json(pedido);
-	});
-};
-
 exports.agreggation = function(req, res) {
 
 	try {
@@ -104,16 +62,6 @@ exports.agreggation = function(req, res) {
 
 
 
-exports.test = function(req, res) {
-	
-	console.log(req.query);
-	console.log(req.params);
-	console.log(req.body);
-	
-	res.json({});
-	
-	
-};
 
 
 
@@ -148,3 +96,84 @@ exports.discard = function(req, res) {
 	
 	
 }
+
+
+
+const getSortingData = function (order) {
+	
+	order = order[0];
+	var side = (order.dir === 'asc') ? 1 : -1;
+	
+	switch(order.column) {
+		case '0': return {_id: side};
+		case '1': return {timestamp: side};
+		case '2': return {clisap: side};
+		case '3': return {'pedido.pedido': side};
+		case '4': return {tipoped: side};
+		case '5': return {lineas: side};
+		case '6': return {almacen: side};
+		case '7': return {ok: side, incidencia: side, descartado: side};
+	}
+}
+
+
+exports.filter = function(req, res) {
+
+	var filter = {};
+
+	if (req.query.ok)				filter.ok = (req.query.ok === 'true');
+	if (req.query.incidencia)		filter.incidencia = (req.query.incidencia === 'true');
+	if (req.query.descartado)		filter.descartado = (req.query.descartado === 'true');
+	if (req.query.fecha)			{
+		if (req.query.fechaFin) {
+			filter.fecha = { $gte: parseInt(req.query.fecha), $lte: parseInt(req.query.fechaFin) }
+		} else {
+			filter.fecha = parseInt(req.query.fecha);
+		}
+	}
+	if (req.query.hora)				{
+		if (req.query.horaFin) {
+			filter.hora = { $gte: parseInt(req.query.hora), $lte: parseInt(req.query.horaFin) }
+		} else {
+			filter.hora = parseInt(req.query.hora);
+		}
+	}
+	if (req.query.clisap)			filter.clisap = req.query.clisap;
+	if (req.query.almacen)			filter.almacen = req.query.almacen;
+	if (req.query.tipoped)			filter.tipoped = req.query.tipoped;
+	if (req.query.numped)			filter['pedido.pedido'] = req.query.numped;
+
+	Pedidos.countDocuments(filter, function (err, count) {
+		if (err) {
+			console.log(err);
+			res.status(500).json(err);
+			return;
+		}
+		
+		
+		Pedidos.find(filter, function(err, pedido) {
+			if (err) {
+				console.log(err);
+				res.status(500).json(err);
+				return;
+			}
+			
+			var result = {
+				draw: (req.query.draw || 0), 
+				recordsTotal: count,
+				recordsFiltered: count,
+				data: pedido
+			};
+			
+			res.json(result);
+		})
+		.sort(getSortingData(req.query.order)) 
+		.skip(parseInt(req.query.start))
+		.limit(parseInt(req.query.length))
+	});
+
+	
+};
+
+
+

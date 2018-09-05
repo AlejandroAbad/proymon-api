@@ -3,10 +3,6 @@
 'use strict';
 module.exports = function(app) {
   var pedidosCtrl = require('../controllers/pedidosCtrl');
-
-  app.route('/')
-	.get(pedidosCtrl.test)
-    .post(pedidosCtrl.test);
   
   app.route('/pedidos')
 	.get(pedidosCtrl.filter);
