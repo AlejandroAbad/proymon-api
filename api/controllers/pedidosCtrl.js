@@ -23,7 +23,10 @@ exports.getByCRC = function(req, res) {
 			return;
 		}
 
-		res.json(pedido);
+		if (pedido.length > 0)
+			res.json(pedido);
+		else
+			res.json({error: 'Pedido no encontrado'});
 
 	});
 };
