@@ -24,7 +24,7 @@ exports.getByCRC = function(req, res) {
 		}
 
 		if (pedido.length > 0)
-			res.json(pedido);
+			res.json(pedido[0]);
 		else
 			res.json({error: 'Pedido no encontrado'});
 
