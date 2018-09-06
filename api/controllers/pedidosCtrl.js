@@ -96,7 +96,7 @@ exports.discard = function(req, res) {
 				fecha: ProymanUtil.dateToProyman(),
 				hora: ProymanUtil.hourToProyman(),
 				descripcion: "Pedido descartado manualmente",
-				tipo: "INCIDENCIA",
+				tipo: "DESCARTADO",
 				original: "Pedido descartado manualmente desde [" + ip + "]",
 				timestamp: ProymanUtil.timestamp()
 			}
