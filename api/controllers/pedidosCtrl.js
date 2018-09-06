@@ -6,7 +6,17 @@ const Pedidos = mongoose.model('pedido');
 const ProymanUtil = require('../../util/proyman.js');
 
 exports.getByCRC = function(req, res) {
-	Pedidos.findById(req.params.crc, function(err, pedido) {
+	
+	res.set('Access-Control-Allow-Origin', '*');
+	
+	var query = {
+		$or: [
+			{_id: req.params.crc}, 
+			{'pedido.pedido': req.params.crc}
+		]
+	};
+	
+	Pedidos.find(query, function(err, pedido) {
 
 		if (err) {
 			res.send(err);
@@ -20,6 +30,9 @@ exports.getByCRC = function(req, res) {
 
 
 exports.getLast = function(req, res) {
+	
+	res.set('Access-Control-Allow-Origin', '*');
+	
 	var now = ProymanUtil.dateToProyman();
 	
 	Pedidos.findOne( {ok: true, fecha: now}, [], {sort: { timestamp: -1 }}, function(err, pedido) {
@@ -35,6 +48,8 @@ exports.getLast = function(req, res) {
 
 
 exports.agreggation = function(req, res) {
+	
+	res.set('Access-Control-Allow-Origin', '*');
 
 	try {
 		var agg = require('../aggregations/' + req.params.aggName + '.js');
@@ -66,6 +81,8 @@ exports.agreggation = function(req, res) {
 
 
 exports.discard = function(req, res) {
+	
+	res.set('Access-Control-Allow-Origin', '*');
 	
 	var crc = req.params.crc;
 	var ip = (req.headers['x-forwarded-for'] || req.connection.remoteAddress);
@@ -111,14 +128,17 @@ const getSortingData = function (order) {
 		case '3': return {'pedido.pedido': side};
 		case '4': return {tipoped: side};
 		case '5': return {lineas: side};
-		case '6': return {almacen: side};
-		case '7': return {ok: side, incidencia: side, descartado: side};
+		case '6': return {'chequeo.faltas': side};
+		case '7': return {almacen: side};
+		case '8': return {ok: side, incidencia: side, descartado: side};
 	}
 }
 
 
 exports.filter = function(req, res) {
 
+	res.set('Access-Control-Allow-Origin', '*');
+	
 	var filter = {};
 
 	if (req.query.ok)				filter.ok = (req.query.ok === 'true');
