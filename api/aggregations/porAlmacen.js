@@ -3,17 +3,18 @@
 const ProymanUtil = require('../../util/proyman.js');
 exports.query = function(params) {
 
+	var match = {};
+	
+	// FECHA
 	if (!params.fecha) {
-		params.fecha = ProymanUtil.dateToProyman();
+		match.fecha = ProymanUtil.dateToProyman();
+	} else {
+		match.fecha = params.fecha;
 	}
+	
 
 	return [ {
-		$match : {
-			"almacen" : {
-				$ne : null
-			},
-			"fecha" : parseInt(params.fecha)
-		}
+		$match : match
 	}, {
 		$group : {
 			_id : "$almacen",
