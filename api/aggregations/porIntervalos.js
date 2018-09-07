@@ -1,12 +1,25 @@
 'use strict';
 
 const ProymanUtil = require('../../util/proyman.js');
+const Filters = require('../../util/queryfilters.js');
+
 exports.query = function(params) {
 
+	var match = {};
+	
 	if (!params.fecha) {
-		params.fecha = ProymanUtil.dateToProyman();
+		match.fecha = ProymanUtil.dateToProyman();
+	} else {
+		match.fecha = Filters.parseInt(params.fecha);
+	}
+	
+	if (params.almacen) {
+		match.almacen = params.almacen;
 	}
 
+	
+	console.log(match);
+	
 	if (!params.intervalo) {
 		params.intervalo = 60;
 	} else {
@@ -19,9 +32,7 @@ exports.query = function(params) {
 	}
 
 	return [ {
-		$match : {
-			"fecha" : parseInt(params.fecha)
-		}
+		$match : match
 	}, {
 		$addFields : {
 			_rango : {
@@ -44,7 +55,7 @@ exports.query = function(params) {
 		}
 	}, {
 		$group : {
-			_id : "$_rango",
+			_id : {rango: "$_rango", fecha: "$fecha"},
 			pedidos : {
 				$sum : 1
 			},
