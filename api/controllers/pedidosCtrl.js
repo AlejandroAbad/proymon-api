@@ -54,9 +54,10 @@ exports.agreggation = function(req, res) {
 	
 	res.set('Access-Control-Allow-Origin', '*');
 
-	try {
+	try { 
 		var agg = require('../aggregations/' + req.params.aggName + '.js');
 	} catch (e) {
+		console.log(e);
 		res.status(404).json({
 			error : 18083013101,
 			mensaje : 'No se encuentra la consulta: ' + req.params.aggName
