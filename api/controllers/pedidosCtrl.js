@@ -4,6 +4,7 @@
 const mongoose = require('mongoose');
 const Pedidos = mongoose.model('pedido');
 const ProymanUtil = require('../../util/proyman.js');
+const Filters = require('./queryfilters.js');
 
 exports.getByCRC = function(req, res) {
 	
@@ -50,6 +51,7 @@ exports.getLast = function(req, res) {
 };
 
 
+/* OLD */
 exports.agreggation = function(req, res) {
 	
 	res.set('Access-Control-Allow-Origin', '*');
@@ -100,10 +102,6 @@ exports.agreggate = function(req, res) {
 }
 
 
-
-
-
-
 exports.discard = function(req, res) {
 	
 	res.set('Access-Control-Allow-Origin', '*');
@@ -142,6 +140,8 @@ exports.discard = function(req, res) {
 
 const getSortingData = function (order) {
 	
+	if (!order || !order.length) return {};
+	
 	order = order[0];
 	var side = (order.dir === 'asc') ? 1 : -1;
 	
@@ -159,33 +159,28 @@ const getSortingData = function (order) {
 }
 
 
-exports.filter = function(req, res) {
+exports.filter = function(req, res) { 
 
 	res.set('Access-Control-Allow-Origin', '*');
-	
+
+	var params = req.query;
 	var filter = {};
 
-	if (req.query.ok)				filter.ok = (req.query.ok === 'true');
-	if (req.query.incidencia)		filter.incidencia = (req.query.incidencia === 'true');
-	if (req.query.descartado)		filter.descartado = (req.query.descartado === 'true');
-	if (req.query.fecha)			{
-		if (req.query.fechaFin) {
-			filter.fecha = { $gte: parseInt(req.query.fecha), $lte: parseInt(req.query.fechaFin) }
-		} else {
-			filter.fecha = parseInt(req.query.fecha);
-		}
-	}
-	if (req.query.hora)				{
-		if (req.query.horaFin) {
-			filter.hora = { $gte: parseInt(req.query.hora), $lte: parseInt(req.query.horaFin) }
-		} else {
-			filter.hora = parseInt(req.query.hora);
-		}
-	}
-	if (req.query.clisap)			filter.clisap = req.query.clisap;
-	if (req.query.almacen)			filter.almacen = req.query.almacen;
-	if (req.query.tipoped)			filter.tipoped = req.query.tipoped;
-	if (req.query.numped)			filter['pedido.pedido'] = req.query.numped;
+	if (params.ok)				filter.ok = (params.ok === 'true');
+	if (params.incidencia)		filter.incidencia = (params.incidencia === 'true');
+	if (params.descartado)		filter.descartado = (params.descartado === 'true');
+	if (params.clisap)			filter.clisap = Filters.parseRange( params.clisap );
+	if (params.almacen)			filter.almacen = Filters.parseRange( params.almacen );
+	if (params.tipoped)			filter.tipoped = Filters.parseRange( params.tipoped );
+	
+	var tmp;
+	if (params.hora && (tmp = Filters.parseRangeInt( params.hora )))	filter.hora = tmp;
+	if (params.fecha && (tmp = Filters.parseRangeInt( params.fecha )))	filter.fecha = tmp
+	else filter.fecha = ProymanUtil.dateToProyman();
+	
+	if (!params.start)	params.start = 0;
+	if (!params.length)	params.length = 20;
+	
 
 	Pedidos.countDocuments(filter, function (err, count) {
 		if (err) {
@@ -211,9 +206,10 @@ exports.filter = function(req, res) {
 			
 			res.json(result);
 		})
-		.sort(getSortingData(req.query.order)) 
-		.skip(parseInt(req.query.start))
-		.limit(parseInt(req.query.length))
+		.sort(getSortingData(params.order)) 
+		.skip(parseInt(params.start))
+		.limit(parseInt(params.length))
+		.select( { eventos: 0 } );
 	});
 
 	
