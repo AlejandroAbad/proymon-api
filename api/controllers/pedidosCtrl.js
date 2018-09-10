@@ -80,6 +80,26 @@ exports.agreggation = function(req, res) {
 }
 
 
+exports.agreggate = function(req, res) {
+	
+	res.set('Access-Control-Allow-Origin', '*');
+ 
+	var query = require('./aggregate.js').query(req.query);
+
+	Pedidos.aggregate(query, function(err, result) {
+		if (err) {
+			res.status(500).send(err);
+			return;
+		}
+
+		res.json(result);
+
+	});
+	
+
+}
+
+
 
 
 
