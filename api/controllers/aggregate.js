@@ -2,8 +2,6 @@
 
 const ProymanUtil = require('../../util/proyman.js');
 const Filters = require('./queryfilters.js');
-const util = require('util');
-
 
 function generateRangoMinutos(rango) {
 	
@@ -57,16 +55,20 @@ function generateRangoLineas(rango) {
 }
 
 function getMatchFilter ( params ) {
+	
 	var filter = {};
 
 	if (params.ok)				filter.ok = (params.ok === 'true');
 	if (params.incidencia)		filter.incidencia = (params.incidencia === 'true');
 	if (params.descartado)		filter.descartado = (params.descartado === 'true');
-	if (params.hora)			filter.hora = Filters.parseRangeInt( params.hora );
 	if (params.clisap)			filter.clisap = Filters.parseRange( params.clisap );
 	if (params.almacen)			filter.almacen = Filters.parseRange( params.almacen );
 	if (params.tipoped)			filter.tipoped = Filters.parseRange( params.tipoped );
-	filter.fecha = params.fecha ? Filters.parseRangeInt( params.fecha ) : ProymanUtil.dateToProyman();
+	
+	var tmp;
+	if (params.hora && (tmp = Filters.parseRangeInt( params.hora )))	filter.hora = tmp;
+	if (params.fecha && (tmp = Filters.parseRangeInt( params.fecha )))	filter.fecha = tmp
+	else filter.fecha = ProymanUtil.dateToProyman();
 	
 	return {
 		$match : filter
@@ -191,9 +193,6 @@ exports.query = function(params) {
 	var sort = getSortOperator(aggregations);
 	if (sort !== false) pipeline.push(sort);
 	
-	console.log(util.inspect(pipeline, false, null, false));
-	
 	return pipeline;
-
 
 }

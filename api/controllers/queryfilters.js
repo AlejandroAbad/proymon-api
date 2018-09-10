@@ -22,11 +22,13 @@ exports.parseRangeInt = function ( value ) {
 			});
 			
 			return { $in: array};
-	
 		}
+		
+		return parseInt(value);
+		
 	}
 
-	return parseInt(value);	
+	return parseInt(value);
 }
 
 exports.parseRange = function ( value ) {
