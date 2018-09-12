@@ -137,6 +137,12 @@ function getGroupId( aggregations ) {
 	if (aggregations.clisap) 		gid.clisap = '$clisap';
 	if (aggregations.almacen) 		gid.almacen = '$almacen';
 	if (aggregations.tipoped) 		gid.tipoped = '$tipoped';
+	if (aggregations['chequeo.servidor']) 		gid.servidorChequeo = '$chequeo.servidor';
+	if (aggregations['pedido.servidor']) 		gid.servidorPedido = '$pedido.servidor';
+	
+	if (!Object.keys(gid).length) {
+		gid.fecha = '$fecha';
+	}
 	
 	return gid;
 }
@@ -165,15 +171,12 @@ exports.query = function(params) {
 
 	var aggregations = parseAggregationParam( params.agg );
 	var pipeline = [];
-
-	
 	
 	var match = getMatchFilter (params);
 	pipeline.push(match);
-	
+
 	var addFields = getAddFields(aggregations);
 	if (addFields !== false) pipeline.push(addFields);
-	
 	
 	pipeline.push({
 		$group : {
@@ -192,6 +195,7 @@ exports.query = function(params) {
 	
 	var sort = getSortOperator(aggregations);
 	if (sort !== false) pipeline.push(sort);
+	
 	
 	return pipeline;
 

@@ -7,11 +7,11 @@ module.exports = function(app) {
   app.route('/pedidos')
 	.get(pedidosCtrl.filter);
   
+  app.route('/pedidos/incidencias')
+	.get(pedidosCtrl.getIncidences);
+  
   app.route('/pedidos/agregacion')
 	.get(pedidosCtrl.agreggate);
-  
-  app.route('/pedidos/:aggName')
-  	.get(pedidosCtrl.agreggation);
   
   app.route('/pedido/ultimo')
 	.get(pedidosCtrl.getLast);

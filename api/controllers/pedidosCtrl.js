@@ -50,26 +50,24 @@ exports.getLast = function(req, res) {
 	});
 };
 
-
-/* OLD */
-exports.agreggation = function(req, res) {
+exports.getIncidences = function(req, res) {
 	
 	res.set('Access-Control-Allow-Origin', '*');
-
-	try { 
-		var agg = require('../aggregations/' + req.params.aggName + '.js');
-	} catch (e) {
-		console.log(e);
-		res.status(404).json({
-			error : 18083013101,
-			mensaje : 'No se encuentra la consulta: ' + req.params.aggName
-		});
-		return;
+	
+	if (!req.query.fecha) {
+		req.query.fecha = ProymanUtil.dateToProyman();
 	}
-
-	var query = agg.query(req.query);
-
-	Pedidos.aggregate(query, function(err, result) {
+	
+	var query = {
+		fecha : parseInt(req.query.fecha),
+		$or : [ 
+			{ ok : false }, 
+			{ incidencia : true }, 
+			{ descartado : true }
+		]
+	};
+	
+	Pedidos.find(query, function(err, result) {
 		if (err) {
 			res.status(500).send(err);
 			return;
@@ -78,7 +76,7 @@ exports.agreggation = function(req, res) {
 		res.json(result);
 
 	});
-
+	
 }
 
 
@@ -112,8 +110,6 @@ exports.discard = function(req, res) {
 		$set: {descartado: true},
 		$push: {
 			eventos: {
-				fecha: ProymanUtil.dateToProyman(),
-				hora: ProymanUtil.hourToProyman(),
 				descripcion: "Pedido descartado manualmente",
 				tipo: "DESCARTADO",
 				original: "Pedido descartado manualmente desde [" + ip + "]",
@@ -176,7 +172,6 @@ exports.filter = function(req, res) {
 	var tmp;
 	if (params.hora && (tmp = Filters.parseRangeInt( params.hora )))	filter.hora = tmp;
 	if (params.fecha && (tmp = Filters.parseRangeInt( params.fecha )))	filter.fecha = tmp
-	else filter.fecha = ProymanUtil.dateToProyman();
 	
 	if (!params.start)	params.start = 0;
 	if (!params.length)	params.length = 20;
