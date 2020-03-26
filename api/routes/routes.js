@@ -3,6 +3,7 @@
 'use strict';
 module.exports = function(app) {
   var pedidosCtrl = require('../controllers/pedidosCtrl');
+  var controlCtrl = require('../controllers/controlCtrl');
   
   app.route('/pedidos')
 	.get(pedidosCtrl.filter);
@@ -20,7 +21,9 @@ module.exports = function(app) {
   	.get(pedidosCtrl.getByCRC);
   
   app.route('/descartar/:crc')
-	.get(pedidosCtrl.discard);
+	  .get(pedidosCtrl.discard);
   
+  app.route('/consulta/:consulta')
+    .get(controlCtrl.consulta);
 };
 
