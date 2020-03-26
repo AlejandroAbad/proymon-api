@@ -1,5 +1,5 @@
 {
-  "name": "ConsultasProymon",
+  "name": "consultas_proymon",
   "version": "0.0.1",
   "description": "API consultas Proymon",
   "main": "server.js",
@@ -13,11 +13,8 @@
   "author": "Alejandro Abad",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.16.3",
-    "mongoose": "^5.2.12",
-    "morgan": "^1.9.0"
-  },
-  "devDependencies": {
-    "nodemon": "^1.18.4"
+    "express": "^4.17.1",
+    "mongoose": "^5.9.6",
+    "morgan": "^1.10.0"
   }
 }
