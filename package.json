@@ -1,6 +1,6 @@
 {
-  "name": "consultas_proymon",
-  "version": "0.0.1",
+  "name": "proymon-api",
+  "version": "1.0.0",
   "description": "API consultas Proymon",
   "main": "server.js",
   "scripts": {
@@ -14,7 +14,10 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.17.1",
-    "mongoose": "^5.9.6",
+    "mongoose": "^5.10.8",
     "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
   }
 }
