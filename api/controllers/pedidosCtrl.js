@@ -3,6 +3,7 @@
 'use strict';
 const mongoose = require('mongoose');
 const Pedidos = mongoose.model('pedido');
+const Fedicom2 = mongoose.model('fedicom2');
 const ProymanUtil = require('../../util/proyman.js');
 const Filters = require('./queryfilters.js');
 
@@ -31,7 +32,6 @@ exports.getByCRC = function(req, res) {
 
 	});
 };
-
 
 exports.getLast = function(req, res) {
 	
@@ -79,7 +79,6 @@ exports.getIncidences = function(req, res) {
 	
 }
 
-
 exports.agreggate = function(req, res) {
 	
 	res.set('Access-Control-Allow-Origin', '*');
@@ -98,7 +97,6 @@ exports.agreggate = function(req, res) {
 	
 
 }
-
 
 exports.discard = function(req, res) {
 	
@@ -132,8 +130,6 @@ exports.discard = function(req, res) {
 	
 }
 
-
-
 const getSortingData = function (order) {
 	
 	if (!order || !order.length) return {};
@@ -153,7 +149,6 @@ const getSortingData = function (order) {
 		case '8': return {ok: side, incidencia: side, descartado: side};
 	}
 }
-
 
 exports.filter = function(req, res) { 
 
@@ -210,5 +205,30 @@ exports.filter = function(req, res) {
 	
 };
 
+exports.fedicom2Find = function (req, res) {
+
+	res.set('Access-Control-Allow-Origin', '*');
+
+	var params = req.params;
+	var filter = {};
+
+	if (params.crc) filter.crc = params.crc;
+	if (params.fecha) filter.fecha = parseInt(params.fecha);
+	if (params.cliente) filter.cliente = "" + parseInt(params.cliente);
+
+	Fedicom2.find(filter, function (err, pedido) {
+
+		if (err) {
+			res.send(err);
+			return;
+		}
+
+		if (pedido.length > 0)
+			res.json(pedido[0]);
+		else
+			res.json({ error: 'Pedido no encontrado en Fedicom 2' });
+
+	});
 
 
+}

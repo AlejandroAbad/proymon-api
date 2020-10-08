@@ -1,15 +1,20 @@
 // MODEL
- 
+
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 
 var PedidosSchema = new Schema({
-  _id: {type: String},
-  descartado: {type: Boolean},
-  eventos: {type: []}
+  _id: { type: String },
+  descartado: { type: Boolean },
+  eventos: { type: [] }
 });
 
-module.exports = mongoose.model('pedido', PedidosSchema);
+
+var Fedicom2Schema = new Schema({
+  _id: { type: String }
+});
 
 
+mongoose.model('pedido', PedidosSchema);
+mongoose.model('fedicom2', Fedicom2Schema);

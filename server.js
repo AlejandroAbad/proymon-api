@@ -11,7 +11,6 @@ require('./api/models/controlModel');
 
 var app = require('express')();
 app.use(require('body-parser').json({extended: true}));
-app.use(require('morgan')('dev'));
 
 var port = process.env.PORT || 40081;
 app.listen(port);
@@ -21,8 +20,5 @@ var routes = require('./api/routes/routes');
 routes(app);
 
 
-
-
-
-console.log('Servidor API Consultas Proyman v0.0.1');
+console.log('Servidor API Consultas Proyman v1.1.0');
 console.log('Escuchando en el puerto ' + port)
