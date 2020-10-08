@@ -1,4 +1,4 @@
-# consultas-proymon
+# proymon-api
 API Consultas Proymon en _NodeJS_.
 
 ---
